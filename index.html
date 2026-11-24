@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apposta — Le app fatte apposta per te | Download gratuito Android, Windows e Web</title>
+<meta name="description" content="Apposta raccoglie le app originali di [TUO NOME]: download gratuiti e sicuri per Android, Windows e Web, con guide, screenshot e video tutorial.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://apposta.github.io/">
+<meta property="og:title" content="Apposta — Le app fatte apposta per te">
+<meta property="og:description" content="Download gratuito di app originali per Android, Windows e Web.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://apposta.github.io/images/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Apposta","url":"https://apposta.github.io/","description":"Le app fatte apposta per te"}
+</script>
+</head>
+<body>
+
+<div class="bg-scene" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<header><div class="container header-in">
+  <a class="logo" href="index.html">📦 <span>Apposta</span></a>
+  <nav><a href="#apps">Le mie app</a><a href="#info">Info</a></nav>
+</div></header>
+
+<section class="hero"><div class="container">
+  <div class="cube-scene" aria-hidden="true"><div class="cube">
+    <div class="face f1">📦</div><div class="face f2">📲</div><div class="face f3">⚡</div>
+    <div class="face f4">🚀</div><div class="face f5">💾</div><div class="face f6">✨</div>
+  </div></div>
+  <h1>Le app fatte <span class="grad-text">apposta</span> per te</h1>
+  <p>Download gratuiti, sicuri e senza sorprese. Scegli, scarica, usa.</p>
+  <div class="pills">
+    <span class="pill">✅ 100% gratuito</span>
+    <span class="pill">🛡️ Testato personalmente</span>
+    <span class="pill">🚫 Zero pubblicità</span>
+  </div>
+</div></section>
+
+<main class="container">
+  <div class="tools" id="apps">
+    <input id="search" type="search" placeholder="🔍 Cerca un'app..." aria-label="Cerca app">
+    <button class="chip active" data-f="all">Tutte</button>
+    <button class="chip" data-f="android">🤖 Android</button>
+    <button class="chip" data-f="windows">🪟 Windows</button>
+    <button class="chip" data-f="web">🌐 Web</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <section id="info">
+    <h2>Perché Apposta?</h2>
+    <p style="color:var(--muted);max-width:720px">Ogni app su questo sito è sviluppata personalmente: nessuna copia, nessun file modificato da terzi. Prima di pubblicare ogni versione, la testo personalmente. Per installare le app Android ti verrà chiesto di consentire le "fonti sconosciute": è normale per i file APK scaricati fuori dal Play Store.</p>
+  </section>
+</main>
+
+<footer><div class="container">
+  <p>© 2025 Apposta — Le app fatte apposta per te</p>
+  <p><a href="mailto:tuamail@example.com">Contattami</a></p>
+</div></footer>
+
+<script src="assets/js/apps.js"></script>
+<script>
+const grid=document.getElementById('grid'),search=document.getElementById('search');
+let filter='all';
+function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function render(){
+  const q=search.value.toLowerCase();
+  const list=APPS.filter(a=>(filter==='all'||a.platforms.includes(filter))&&(a.name+' '+a.short+' '+a.category).toLowerCase().includes(q))
+    .sort((a,b)=>(b.featured?1:0)-(a.featured?1:0)||b.date.localeCompare(a.date));
+  grid.innerHTML=list.map(a=>`
+  <article class="card">
+    <a class="card-media" href="app.html?app=${slugify(a.id)}"><img src="${a.images[0]}" alt="Screenshot dell'app ${a.name}" loading="lazy"></a>
+    <div class="card-body">
+      <div class="badges">${a.platforms.map(p=>`<span class="badge b-${p}">${{android:'🤖 Android',windows:'🪟 Windows',web:'🌐 Web'}[p]}</span>`).join('')}<span class="badge b-cat">${a.category}</span></div>
+      <h3>${a.name} ${a.featured?'⭐':''}</h3>
+      <p>${a.short}</p>
+      <a class="btn" href="app.html?app=${slugify(a.id)}">Scopri di più →</a>
+    </div>
+  </article>`).join('')||'<p style="color:var(--muted)">Nessuna app trovata.</p>';
+  document.querySelectorAll('.card').forEach(c=>{
+    c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      c.style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*9}deg) translateY(-6px) scale(1.02)`});
+    c.addEventListener('mouseleave',()=>c.style.transform='');
+  });
+  document.querySelectorAll('.card').forEach((c,i)=>{c.classList.add('reveal');setTimeout(()=>c.classList.add('vis'),80+i*80)});
+}
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');filter=c.dataset.f;render()});
+search.oninput=render;
+render();
+</script>
+</body>
+</html>
