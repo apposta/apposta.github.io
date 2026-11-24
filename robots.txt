@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://apposta.github.io/sitemap.xml
