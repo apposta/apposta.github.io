@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App — Apposta</title>
+<meta name="robots" content="index, follow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="bg-scene" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<header><div class="container header-in">
+  <a class="logo" href="index.html">📦 <span>Apposta</span></a>
+  <nav><a href="index.html#apps">← Tutte le app</a></nav>
+</div></header>
+
+<main class="container detail" id="detail"></main>
+
+<div class="lightbox" id="lb" onclick="this.style.display='none'"><img id="lbimg" alt=""></div>
+
+<footer><div class="container"><p>© 2025 Apposta — Le app fatte apposta per te</p></div></footer>
+
+<script src="assets/js/apps.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+const slug=params.get('app');
+const app=APPS.find(a=>slugify(a.id)===slug);
+const box=document.getElementById('detail');
+if(!app){box.innerHTML='<h1>App non trovata 😕</h1><p><a href="index.html">Torna alla home</a></p>';}
+else{
+document.title=`${app.name} — ${app.tagline} | Apposta`;
+const m=document.createElement('meta');m.name='description';m.content=app.short;document.head.appendChild(m);
+const ld=document.createElement('script');ld.type='application/ld+json';
+ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"SoftwareApplication",name:app.name,applicationCategory:app.category,operatingSystem:app.platforms.join(', '),description:app.short,softwareVersion:app.version,offers:{"@type":"Offer",price:"0",priceCurrency:"EUR"},url:CONFIG.siteUrl+'/app.html?app='+slug});
+document.head.appendChild(ld);
+const P={android:'🤖 Android',windows:'🪟 Windows',web:'🌐 Web'};
+box.innerHTML=`
+<nav style="color:var(--muted);font-size:.9rem"><a href="index.html">Home</a> › ${app.name}</nav>
+<h1 style="margin-top:14px">${app.name}</h1>
+<p style="color:var(--muted);font-size:1.15rem">${app.tagline}</p>
+<div class="badges" style="margin:12px 0">
+  ${app.platforms.map(p=>`<span class="badge b-${p}">${P[p]}</span>`).join('')}
+  <span class="badge b-cat">v${app.version}</span><span class="badge b-cat">${app.size}</span><span class="badge b-cat">${app.category}</span>
+</div>
+<img class="hero-img" src="${app.images[0]}" alt="Anteprima dell'app ${app.name}">
+<div style="margin:20px 0">
+  <a class="btn" href="${app.download}" download>⬇️ Scarica ora — Gratis</a>
+  <span style="color:var(--muted);font-size:.85rem;margin-left:12px">Download sicuro, testato personalmente</span>
+</div>
+<h2>Screenshot</h2>
+<div class="gallery">${app.images.map((s,i)=>`<img src="${s}" alt="Screenshot ${i+1} dell'app ${app.name}" loading="lazy" onclick="zoom('${s}')">`).join('')}</div>
+ ${app.video?`<h2>Come si usa — Video</h2><iframe class="video" src="${app.video}" title="Video tutorial ${app.name}" allowfullscreen loading="lazy"></iframe>`:''}
+<h2>Descrizione</h2>
+<div class="long">${app.long}</div>
+<div class="assistant">
+  <h2>🤖 Assistente virtuale</h2>
+  <div class="chat" id="chat"><div class="msg bot">Ciao! Sono l'assistente di ${app.name}. Chiedimi come installarla o usarla! 👋</div></div>
+  <div class="row"><input id="q" placeholder="Scrivi la tua domanda..." aria-label="Domanda all'assistente"><button class="btn" onclick="ask()">Invia</button></div>
+</div>`;
+window.zoom=s=>{document.getElementById('lbimg').src=s;document.getElementById('lb').style.display='flex'};
+window.ask=()=>{
+  const inp=document.getElementById('q'),chat=document.getElementById('chat');
+  const t=inp.value.trim();if(!t)return;
+  chat.insertAdjacentHTML('beforeend','<div class="msg user"></div>');
+  chat.lastElementChild.textContent=t;
+  const norm=t.toLowerCase();
+  const hit=app.faq.find(f=>f.q.toLowerCase().split(/\s+/).some(w=>w.length>3&&norm.includes(w)));
+  const ans=hit?hit.a:`Non ho una risposta esatta per questo. Scrivimi a ${CONFIG.contactEmail} e ti rispondo personalmente!`;
+  chat.insertAdjacentHTML('beforeend','<div class="msg bot"></div>');
+  chat.lastElementChild.textContent=ans;inp.value='';
+  chat.scrollTop=chat.scrollHeight;
+};
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
+}
+function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+</script>
+</body>
+</html>
